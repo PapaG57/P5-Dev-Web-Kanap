@@ -1,13 +1,14 @@
+// chargement de l'API
 function allProducts(){
     fetch("http://localhost:3000/api/products")
-    .then(response=>response.json())
-    .then(data=>affichage(data))
+    .then(response => response.json())
+    .then(data => affichage(data))
 }
 allProducts();
 
+// affichage des produits dans la page index.html
 function affichage(produit){
 for(p of produit){
-
     const codeHtml=`<a href="./product.html?id=${p._id}">
             <article>
               <img src="${p.imageUrl}" alt="${p.altTxt}">
