@@ -1,6 +1,6 @@
-// recuperation de l'ID du produit à partir du parametre de l'URL
+// recuperation de l'ID du produit a partir du parametre de l'URL
 const PRODUCT_ID = new URLSearchParams(location.search).get('id');
-
+var canape;
 function productById() {
   fetch(`http://localhost:3000/api/products/${PRODUCT_ID}`)
     .then((response) => response.json())
@@ -8,8 +8,9 @@ function productById() {
 }
 productById();
 
-// affichage du produit sélectionnes dans la page product.html
+// affichage du produit selectionne dans la page product.html
 function affichage(product) {
+  canape = product;
   const IMG = document.querySelector('div.item__img');
   const NAME = document.getElementById('title');
   const PRICE = document.getElementById('price');
@@ -26,3 +27,25 @@ function affichage(product) {
     );
   }
 }
+
+// ajout du produit au panier
+document.getElementById('addToCart').addEventListener('click', (event) => {
+  const quantity = document.getElementById('quantity');
+  const color = document.getElementById('colors');
+  const PRODUCTS = {
+    id: PRODUCT_ID,
+    name: canape.name,
+    price: canape.price,
+    color: color.value,
+    quantity: quantity.value,
+    image: canape.imageUrl,
+    alt: canape.altTxt,
+  };
+
+  var tableauCanape = JSON.parse(localStorage.getItem('tableauCanape'));
+  if (tableauCanape === null) {
+    tableauCanape = [];
+  }
+  tableauCanape.push(PRODUCTS);
+  localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
+});
