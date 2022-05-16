@@ -8,7 +8,7 @@ function productById() {
 }
 productById();
 
-// affichage du produit selectionne dans la page product.html
+// affichage du produit selectionné dans la page "Produit"
 function affichage(product) {
   canape = product;
   const IMG = document.querySelector('div.item__img');
@@ -41,11 +41,19 @@ document.getElementById('addToCart').addEventListener('click', (event) => {
     image: canape.imageUrl,
     alt: canape.altTxt,
   };
-
   var tableauCanape = JSON.parse(localStorage.getItem('tableauCanape'));
   if (tableauCanape === null) {
     tableauCanape = [];
   }
-  tableauCanape.push(PRODUCTS);
+  let trouve = false;
+  tableauCanape.forEach((element) => {
+    if (element.color === color.value && element.id === PRODUCT_ID) {
+      element.quantity = quantity.value;
+      trouve = true;
+    }
+  });
+  if (!trouve) {
+    tableauCanape.push(PRODUCTS);
+  }
   localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
 });
