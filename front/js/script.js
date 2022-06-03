@@ -8,6 +8,8 @@ allProducts();
 
 // affichage des produits dans la page index.html
 function affichage(produit) {
+  // La balise a href nous permet de rediriger sur la page d'affichage d'un seul produit
+  // l'id du produit est mis en paramêtre au niveau de l'url
   for (p of produit) {
     const CODEHTML = `<a href="./product.html?id=${p._id}">
             <article>

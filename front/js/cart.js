@@ -1,8 +1,10 @@
 // recuperation des produits choisis
 var tableauCanape = JSON.parse(localStorage.getItem('tableauCanape'));
 
+// affichage de tous les produits
 function affichageCanape() {
   for (let i = 0; i < tableauCanape.length; i++) {
+    // calcul du prix total par ligne de produits
     var totalPrice = tableauCanape[i].price * tableauCanape[i].quantity;
     const CODEHTML = `<article class="cart__item" data-id="${tableauCanape[i].id}" data-color="${tableauCanape[i].color}">
                   <div class="cart__item__img">
@@ -36,7 +38,7 @@ function affichageCanape() {
 }
 affichageCanape();
 
-// supprimer article(s)
+// supprimer un article
 const MOINS = document.querySelectorAll('.deleteItem');
 for (let i = 0; i < MOINS.length; i++) {
   MOINS[i].addEventListener('click', (Event) => {
@@ -47,11 +49,13 @@ for (let i = 0; i < MOINS.length; i++) {
   });
 }
 
-// ajout d'un article à partir du panier
+// changer la quantité d'un article à partir du panier
 const ajoutPanier = document.querySelectorAll('.itemQuantity');
 for (let i = 0; i < ajoutPanier.length; i++) {
   ajoutPanier[i].addEventListener('change', (event) => {
     event.preventDefault();
+
+    // récupération de la nouvelle quantité à partir du champ quantité
     const newQuantity = event.target.value;
     const PRODUCTS = {
       id: tableauCanape[i].id,
@@ -65,9 +69,10 @@ for (let i = 0; i < ajoutPanier.length; i++) {
     tableauCanape[i] = PRODUCTS;
     localStorage.clear();
     localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
+
+    // permet de réactualiser la page
     location.reload();
   });
-  console.log();
 }
 
 // afficher le prix global et le nombre d'article
@@ -95,7 +100,7 @@ var email = document.getElementById('email');
 
 var firstNameValid = false;
 var lastNameValid = false;
-// var addressValid = false;
+var addressValid = false;
 var cityValid = false;
 var emailValid = false;
 
@@ -107,9 +112,11 @@ const validFirstName = function (inputFirstName) {
   // On teste l'expression régulière
   if (firstNameRegExp.test(inputFirstName)) {
     firstNameValid = true;
+    document.getElementById('firstNameErrorMsg').innerText = '';
   } else {
     document.getElementById('firstNameErrorMsg').innerText =
-      "Le nom n'est pas valide !";
+      "Le prénom n'est pas valide !";
+    firstNameValid = false;
   }
 };
 document.getElementById('firstName').addEventListener('change', () => {
@@ -124,9 +131,11 @@ const validLastName = function (inputLastName) {
   // On teste l'expression régulière
   if (lastNameRegExp.test(inputLastName)) {
     lastNameValid = true;
+    document.getElementById('lastNameErrorMsg').innerText = '';
   } else {
     document.getElementById('lastNameErrorMsg').innerText =
-      "Le prénom n'est pas valide !";
+      "Le nom n'est pas valide !";
+    lastNameValid = false;
   }
 };
 document.getElementById('lastName').addEventListener('change', () => {
@@ -135,15 +144,16 @@ document.getElementById('lastName').addEventListener('change', () => {
 
 // vérification la modification d'adresse
 const validAddress = function (inputAddress) {
-  //Creation de la reg exp pour validation de l'adresse
-  let addressRegExp = new RegExp('^[#.0-9a-zA-Zs,-]+d{5}$/g');
-  console.log(addressRegExp.test(inputAddress));
+  //Creation de la reg exp pour validation de l'adresse postale
+  let addressRegExp = new RegExp('[#.0-9,a-zA-Zs,-_]');
   // On teste l'expression régulière
   if (addressRegExp.test(inputAddress)) {
     addressValid = true;
+    document.getElementById('addressErrorMsg').innerText = '';
   } else {
     document.getElementById('addressErrorMsg').innerText =
       "L'adresse n'est pas valide !";
+    addressValid = false;
   }
 };
 document.getElementById('address').addEventListener('change', () => {
@@ -158,9 +168,11 @@ const validCity = function (inputCity) {
   // On teste l'expression régulière
   if (cityRegExp.test(inputCity)) {
     cityValid = true;
+    document.getElementById('cityErrorMsg').innerText = '';
   } else {
     document.getElementById('cityErrorMsg').innerText =
       "Le nom de la ville n'est pas valide !";
+    cityValid = false;
   }
 };
 document.getElementById('city').addEventListener('change', () => {
@@ -178,9 +190,11 @@ const validEmail = function (inputEmail) {
   // On teste l'expression régulière
   if (emailRegExp.test(inputEmail)) {
     emailValid = true;
+    document.getElementById('emailErrorMsg').innerText = '';
   } else {
     document.getElementById('emailErrorMsg').innerText =
       "Le mail n'est pas valide !";
+    emailValid = false;
   }
 };
 
@@ -193,11 +207,20 @@ document.getElementById('email').addEventListener('change', () => {
 document.getElementById('order').addEventListener('click', (event) => {
   event.preventDefault();
 
-  if (emailValid && firstNameValid && lastNameValid && cityValid) {
+  // vérification de la validation des champs
+  // si tous les champs sont valident, exécution de la requête Post
+  if (
+    emailValid &&
+    firstNameValid &&
+    lastNameValid &&
+    cityValid &&
+    addressValid
+  ) {
     for (let i = 0; i < tableauCanape.length; i++) {
       products.push(tableauCanape[i].id);
     }
 
+    // formalisation du tableau du json de contact
     const formulaire = {
       contact: {
         firstName: firstName.value,
@@ -222,12 +245,11 @@ document.getElementById('order').addEventListener('click', (event) => {
       .then((id) => {
         document.location.href = `confirmation.html?id=${id.orderId}`;
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
+    localStorage.clear();
   } else {
     alert(
-      'Veuillez vérifier que tous vos champs soient correctement remplis !'
+      'Veuillez vérifier que tous les champs soient correctement renseignés !'
     );
   }
 });
