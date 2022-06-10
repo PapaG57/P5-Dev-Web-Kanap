@@ -36,38 +36,43 @@ document.getElementById('addToCart').addEventListener('click', (event) => {
   const quantity = document.getElementById('quantity');
   const color = document.getElementById('colors');
 
-  // tableau json de la quantité et de la couleur choisie
-  const PRODUCTS = {
-    id: PRODUCT_ID,
-    name: canape.name,
-    price: canape.price,
-    color: color.value,
-    quantity: quantity.value,
-    image: canape.imageUrl,
-    alt: canape.altTxt,
-  };
+  if (quantity.value != 0 && color.value != '') {
+    // tableau json de la quantité et de la couleur choisie
+    const PRODUCTS = {
+      id: PRODUCT_ID,
+      name: canape.name,
+      color: color.value,
+      quantity: quantity.value,
+      image: canape.imageUrl,
+      alt: canape.altTxt,
+    };
 
-  // gestion du tableau canapé
-  var tableauCanape = JSON.parse(localStorage.getItem('tableauCanape'));
-  if (tableauCanape === null) {
-    tableauCanape = [];
-  }
-
-  // gestion de couleur pour les canapés choisis
-  let trouve = false;
-  tableauCanape.forEach((element) => {
-    if (element.color === color.value && element.id === PRODUCT_ID) {
-      element.quantity = quantity.value;
-      trouve = true;
+    // gestion du tableau canapé
+    var tableauCanape = JSON.parse(localStorage.getItem('tableauCanape'));
+    if (tableauCanape === null) {
+      tableauCanape = [];
     }
-  });
-  if (!trouve) {
-    tableauCanape.push(PRODUCTS);
+
+    // gestion de couleur pour les canapés choisis
+    let trouve = false;
+    tableauCanape.forEach((element) => {
+      if (element.color === color.value && element.id === PRODUCT_ID) {
+        element.quantity = quantity.value;
+        trouve = true;
+      }
+    });
+    if (!trouve) {
+      tableauCanape.push(PRODUCTS);
+    }
+
+    // ajout du produit dans le localStorage
+    localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
+
+    // redirection à la page d'accueil
+    window.location.href = './index.html';
+  } else {
+    alert(
+      'Veuillez vérifier que les champs couleur et quantité sont correctement remplis !'
+    );
   }
-
-  // ajout du produit dans le localStorage
-  localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
-
-  // redirection à la page d'accueil
-  window.location.href = './index.html';
 });

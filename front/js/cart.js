@@ -1,12 +1,23 @@
-// recuperation des produits choisis
+// récupération des produits choisis
 var tableauCanape = JSON.parse(localStorage.getItem('tableauCanape'));
 
+// récupération du prix à partir de l'id
+var price = 0;
+const fetchPrice = async (id) => {
+  const URL = 'http://localhost:3000/api/products/' + id;
+  await fetch(URL)
+    .then((res) => res.json())
+    .then((data) => (price = data));
+};
+
 // affichage de tous les produits
-function affichageCanape() {
-  for (let i = 0; i < tableauCanape.length; i++) {
-    // calcul du prix total par ligne de produits
-    var totalPrice = tableauCanape[i].price * tableauCanape[i].quantity;
-    const CODEHTML = `<article class="cart__item" data-id="${tableauCanape[i].id}" data-color="${tableauCanape[i].color}">
+async function affichageCanape() {
+  if (tableauCanape) {
+    for (let i = 0; i < tableauCanape.length; i++) {
+      await fetchPrice(tableauCanape[i].id);
+      // calcul du prix total par ligne de produits
+      var totalPrice = price.price * tableauCanape[i].quantity;
+      const CODEHTML = `<article class="cart__item" data-id="${tableauCanape[i].id}" data-color="${tableauCanape[i].color}">
                   <div class="cart__item__img">
                     <img src="${tableauCanape[i].image}" alt="Photographie d'un canapé">
                   </div>
@@ -27,66 +38,66 @@ function affichageCanape() {
                     </div>
                   </div>
                 </article>`;
-    document
-      .getElementById('cart__items')
-      .insertAdjacentHTML('beforeend', CODEHTML);
-    if (tableauCanape[i].id == tableauCanape[i].id) {
-      tableauCanape[i].quantity = tableauCanape[i].quantity;
-      +1;
+      document
+        .getElementById('cart__items')
+        .insertAdjacentHTML('beforeend', CODEHTML);
+      if (tableauCanape[i].id == tableauCanape[i].id) {
+        tableauCanape[i].quantity = tableauCanape[i].quantity;
+        +1;
+      }
     }
+  }
+  // supprimer un article
+  const MOINS = document.querySelectorAll('.deleteItem');
+  for (let i = 0; i < MOINS.length; i++) {
+    MOINS[i].addEventListener('click', (Event) => {
+      Event.preventDefault();
+      tableauCanape.splice(i, 1);
+      localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
+      location.reload();
+    });
+  }
+  // changer la quantité d'un article à partir du panier
+  const ajoutPanier = document.querySelectorAll('.itemQuantity');
+  for (let i = 0; i < ajoutPanier.length; i++) {
+    ajoutPanier[i].addEventListener('change', (event) => {
+      event.preventDefault();
+
+      // récupération de la nouvelle quantité à partir du champ quantité
+      const newQuantity = event.target.value;
+      const PRODUCTS = {
+        id: tableauCanape[i].id,
+        name: tableauCanape[i].name,
+        color: tableauCanape[i].color,
+        quantity: newQuantity,
+        image: tableauCanape[i].image,
+        alt: tableauCanape[i].alt,
+      };
+      tableauCanape[i] = PRODUCTS;
+      localStorage.clear();
+      localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
+
+      // permet de réactualiser la page
+      location.reload();
+    });
   }
 }
 affichageCanape();
 
-// supprimer un article
-const MOINS = document.querySelectorAll('.deleteItem');
-for (let i = 0; i < MOINS.length; i++) {
-  MOINS[i].addEventListener('click', (Event) => {
-    Event.preventDefault();
-    tableauCanape.splice(i, 1);
-    localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
-    location.reload();
-  });
-}
-
-// changer la quantité d'un article à partir du panier
-const ajoutPanier = document.querySelectorAll('.itemQuantity');
-for (let i = 0; i < ajoutPanier.length; i++) {
-  ajoutPanier[i].addEventListener('change', (event) => {
-    event.preventDefault();
-
-    // récupération de la nouvelle quantité à partir du champ quantité
-    const newQuantity = event.target.value;
-    const PRODUCTS = {
-      id: tableauCanape[i].id,
-      name: tableauCanape[i].name,
-      price: tableauCanape[i].price,
-      color: tableauCanape[i].color,
-      quantity: newQuantity,
-      image: tableauCanape[i].image,
-      alt: tableauCanape[i].alt,
-    };
-    tableauCanape[i] = PRODUCTS;
-    localStorage.clear();
-    localStorage.setItem('tableauCanape', JSON.stringify(tableauCanape));
-
-    // permet de réactualiser la page
-    location.reload();
-  });
-}
-
 // afficher le prix global et le nombre d'article
-function affichageTotaux() {
+async function affichageTotaux() {
   let TotalPrice = 0;
   let TotalQuantity = 0;
-  for (let i = 0; i < tableauCanape.length; i++) {
-    const TOTAL =
-      tableauCanape[i].price * parseInt(tableauCanape[i].quantity, 10);
-    TotalPrice += TOTAL;
-    TotalQuantity += parseInt(tableauCanape[i].quantity, 10);
+  if (tableauCanape) {
+    for (let i = 0; i < tableauCanape.length; i++) {
+      await fetchPrice(tableauCanape[i].id);
+      const TOTAL = price.price * parseInt(tableauCanape[i].quantity, 10);
+      TotalPrice += TOTAL;
+      TotalQuantity += parseInt(tableauCanape[i].quantity, 10);
+    }
+    document.getElementById('totalPrice').textContent = TotalPrice;
+    document.getElementById('totalQuantity').textContent = TotalQuantity;
   }
-  document.getElementById('totalPrice').textContent = TotalPrice;
-  document.getElementById('totalQuantity').textContent = TotalQuantity;
 }
 affichageTotaux();
 
