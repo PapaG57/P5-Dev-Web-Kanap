@@ -4,7 +4,7 @@ var canape;
 
 // requête pour récupérer un seul produit et exécution de la fonction d'affichage
 function productById() {
-  fetch(`http://localhost:3000/api/products/${PRODUCT_ID}`)
+  fetch(`https://p5-dev-web-kanap-lbrs.onrender.com/api/products/${PRODUCT_ID}`)
     .then((response) => response.json())
     .then((data) => affichage(data));
 }

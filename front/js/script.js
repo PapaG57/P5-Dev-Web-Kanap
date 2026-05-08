@@ -1,6 +1,6 @@
 // chargement de l'API
 function allProducts() {
-  fetch('http://localhost:3000/api/products')
+  fetch('https://p5-dev-web-kanap-lbrs.onrender.com/api/products')
     .then((response) => response.json())
     .then((data) => affichage(data));
 }

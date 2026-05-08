@@ -4,7 +4,7 @@ var tableauCanape = JSON.parse(localStorage.getItem('tableauCanape'));
 // récupération du prix à partir de l'id
 var price = 0;
 const fetchPrice = async (id) => {
-  const URL = 'http://localhost:3000/api/products/' + id;
+  const URL = 'https://p5-dev-web-kanap-lbrs.onrender.com/api/products/' + id;
   await fetch(URL)
     .then((res) => res.json())
     .then((data) => (price = data));
@@ -244,7 +244,7 @@ document.getElementById('order').addEventListener('click', (event) => {
     };
 
     // envoi du formulaire et effacement du localStorage
-    fetch('http://localhost:3000/api/products/order', {
+    fetch('https://p5-dev-web-kanap-lbrs.onrender.com/api/products/order', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
